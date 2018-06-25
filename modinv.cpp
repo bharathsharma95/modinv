@@ -1,67 +1,73 @@
-#include <iostream>
-#define AP_INT_MAX_W 4096
-#include <ap_int.h>
-using namespace std;
-
-ap_uint<1024> temp_arr[13] = {0};
-ap_uint<1024> a_arr[13] = {0};
-ap_uint<1024> b_arr[13] = {0};
-ap_uint<1024> x_arr[13] = {0};
-ap_uint<1024> y_arr[13] = {0};
-
-
 ap_uint<1024> modinv(ap_uint<1024>a, ap_uint<1024>b)
 {
 
 	ap_uint<16> count = 0;
 	ap_uint<1024> temp = 0;
+	cout<< "\n******************************************\n\n";
+
+	a_arr[count] = a;
+	b_arr[count] = b;
+	ap_uint<1024> b_0 = b;
+	//cout << "a_arr[" << count << "] : " << a_arr[count] << "\n";
+	//cout << "b_arr[" << count << "] : " << b_arr[count] << "\n\n";
+	//count++;
 
 
 	while(a!=0)
 	{
 		temp = a;
 		temp_arr[count] = temp;
+
 		a = b%a;
-		a_arr[count] = a;
+		a_arr[count+1] = a;
+
 		b = temp;
-		b_arr[count] = b;
+		b_arr[count+1] = b;
+
+		cout << "a_arr[" << count << "] : " << a_arr[count] << "\n";
+		cout << "b_arr[" << count << "] : " << b_arr[count] << "\n\n";
 		count++;
 	}
+
+	b_arr[0] = b_0;
+	cout << "here b_arr[0] : " << b_arr[0] << "\n\n";
+
+	//count is 13 until now
 
 	// when a == 0; setting values of pointers '*x = 0' and '*y = 1'
 
 	ap_uint<1024> gcd = b;
-	cout << "gcd is : " << gcd << "\n";
-	count--;
-	cout << "count is : " << count << "\n";
 	x_arr[count] = 0; y_arr[count] = 1;
+
+	cout << "a_arr[" << count << "] : " << a_arr[count] << "\n";
+	cout << "b_arr[" << count << "] : " << b_arr[count] << "\n";
+	cout << "\nreturning b_arr[" << count << "] as gcd : " << gcd << "\n\n";
+
 	count--;
+	cout << "after count-- , count is : " << count << "\n\n";
+
 
 	// updating the values of pointers x & y from recursive calls (from while loop)
-
 
 		while(count!=0)
 		{
 
-			ap_uint<1024> div_helper;
 			ap_uint<1024> b_arr_temp = b_arr[count];
 			ap_uint<1024> a_arr_temp = a_arr[count];
+
 			ap_uint<1024> X_arr_count_plus1;
 			ap_uint<1024> Y_arr_count_plus1;
-
-			div_helper = b_arr_temp/a_arr_temp;
 			X_arr_count_plus1 = x_arr[count+1];
 			Y_arr_count_plus1 = y_arr[count+1];
 
-			ap_uint<1024> mult_helper;
-			mult_helper = (div_helper * X_arr_count_plus1);
-
+				//calculating *x= y1 - ((b/a) * x1);
 				ap_uint<1024> X_arr_count_temp;
-				X_arr_count_temp = Y_arr_count_plus1 - mult_helper;
+				X_arr_count_temp = Y_arr_count_plus1 - ((b_arr_temp/a_arr_temp) * X_arr_count_plus1);
 
 					x_arr[count] = X_arr_count_temp;
 					cout << "x_arr[" << count << "] : " << x_arr[count] << "\n";
 
+					//calculating *y=x1
 				ap_uint<1024> Y_arr_count_temp;
 				Y_arr_count_temp = x_arr[count+1];
 
@@ -75,24 +81,20 @@ ap_uint<1024> modinv(ap_uint<1024>a, ap_uint<1024>b)
 
 
 
-	// when count == 0
+	// When count == 0
 
-
-		ap_uint<1024> div_helper;
 			ap_uint<1024> b_arr_temp = b_arr[count];
 			ap_uint<1024> a_arr_temp = a_arr[count];
+
 			ap_uint<1024> X_arr_count_plus1;
 			ap_uint<1024> Y_arr_count_plus1;
 
-			div_helper = b_arr_temp/a_arr_temp;
 			X_arr_count_plus1 = x_arr[count+1];
 			Y_arr_count_plus1 = y_arr[count+1];
 
-			ap_uint<1024> mult_helper;
-			mult_helper = (div_helper * X_arr_count_plus1);
 
 				ap_uint<1024> X_arr_count_temp;
-				X_arr_count_temp = Y_arr_count_plus1 - mult_helper;
+				X_arr_count_temp = Y_arr_count_plus1 - ((b_arr_temp/a_arr_temp) * X_arr_count_plus1);
 
 					x_arr[count] = X_arr_count_temp;
 					cout << "x_arr[" << count << "] : " << x_arr[count] << "\n";
@@ -101,35 +103,16 @@ ap_uint<1024> modinv(ap_uint<1024>a, ap_uint<1024>b)
 				Y_arr_count_temp = x_arr[count+1];
 
 					y_arr[count] = Y_arr_count_temp;
-					cout << "y_arr[" << count << "] : " << y_arr[count] << "\n\n";
+					cout << "y_arr[" << count << "] : " << y_arr[count] << "\n";
+					cout << "a_arr[" << count << "] : " << a_arr[count] << "\n";
+					cout << "b_arr[" << count << "] : " << b_arr[count] << "\n\n";
 
-/*
-		ap_uint<1024> div_helper;
-			ap_uint<1024> b_arr_temp = b_arr[count];
-			ap_uint<1024> a_arr_temp = a_arr[count];
-			ap_uint<1024> X_arr_count_plus1;
-			ap_uint<1024> Y_arr_count_plus1;
 
-			div_helper = b_arr_temp/a_arr_temp;
-			X_arr_count_plus1 = x_arr[count+1];
-			Y_arr_count_plus1 = y_arr[count+1];
+	// when count == 0 --> end
 
-			ap_uint<1024> mult_helper;
-			mult_helper = (div_helper * X_arr_count_plus1);
 
-				ap_uint<1024> X_arr_count_temp;
-				X_arr_count_temp = Y_arr_count_plus1 - mult_helper;
 
-					x_arr[count] = X_arr_count_temp;
-					cout << "x_arr[" << count << "] : " << x_arr[count] << "\n";
 
-				ap_uint<1024> Y_arr_count_temp;
-				Y_arr_count_temp = x_arr[count+1];
-
-					y_arr[count] = Y_arr_count_temp;
-					cout << "y_arr[" << count << "] : " << y_arr[count] << "\n\n";
-
-*/
 		ap_uint<1024> res;
 		if (gcd != 1)
 		        cout << "Inverse doesn't exist\n\n\n";
